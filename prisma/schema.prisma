@@ -7,3 +7,32 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model Organization {
+  id        String      @id @default(uuid())
+  name      String   @unique
+  pricing   Pricing[]
+}
+enum ItemType {
+  perishable
+  nonPerishable
+}
+model Item {
+  id          String      @id @default(uuid())
+  type        ItemType @default(nonPerishable)   
+  description String
+  pricing     Pricing[]
+}
+
+model Pricing {
+  id             String      @id @default(uuid())
+  organization  Organization  @relation(fields: [organization_id], references: [id])
+  organization_id String
+  item           Item          @relation(fields: [item_id], references: [id])
+  item_id        String
+  zone           String
+  base_distance_in_km Int
+  km_price       Decimal 
+  fix_price      Int        
+ 
+//   UNIQUE(organization_id, item_id, zone)
+}
